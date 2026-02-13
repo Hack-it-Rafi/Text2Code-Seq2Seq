@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+  text2code:
+    build: .
+    container_name: text2code_seq2seq
+    volumes:
+      - .:/app
+    command: bash run.sh
