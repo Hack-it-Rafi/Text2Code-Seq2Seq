@@ -1,0 +1,80 @@
+# Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyTorch/Machine Learning
+*.pt
+*.pth
+*.h5
+*.pkl
+*.pickle
+*.ckpt
+outputs/checkpoints/
+outputs/logs/
+outputs/plots/
+runs/
+wandb/
+
+# Datasets (large files)
+data/
+datasets/
+*.csv
+*.json
+*.jsonl
+*.parquet
+*.arrow
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment variables
+.env
+.env.local
+
+# Logs
+*.log
+logs/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json

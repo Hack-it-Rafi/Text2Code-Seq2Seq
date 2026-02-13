@@ -28,9 +28,17 @@ class CodeSearchNetDataset(Dataset):
 
 def load_data():
     dataset = load_dataset(DATASET_NAME)
-
-    train_data = dataset["train"].select(range(TRAIN_SIZE))
-    val_data = dataset["validation"].select(range(VAL_SIZE))
-    test_data = dataset["test"].select(range(TEST_SIZE))
+    
+    if "validation" in dataset:
+        train_data = dataset["train"].select(range(TRAIN_SIZE))
+        val_data = dataset["validation"].select(range(VAL_SIZE))
+    else:
+        train_data = dataset["train"].select(range(TRAIN_SIZE))
+        val_data = dataset["train"].select(range(TRAIN_SIZE, TRAIN_SIZE + VAL_SIZE))
+    
+    if "test" in dataset:
+        test_data = dataset["test"].select(range(TEST_SIZE))
+    else:
+        test_data = dataset["train"].select(range(TRAIN_SIZE + VAL_SIZE, TRAIN_SIZE + VAL_SIZE + TEST_SIZE))
 
     return train_data, val_data, test_data
