@@ -9,7 +9,7 @@ from tokenizer import Tokenizer
 
 from models.rnn_seq2seq import Seq2SeqRNN
 from models.lstm_seq2seq import Seq2SeqLSTM
-
+from models.lstm_attention import Seq2SeqAttention
 
 # Allow safe loading of Tokenizer class
 torch.serialization.add_safe_globals([Tokenizer])
@@ -22,22 +22,31 @@ def greedy_decode(model, src, tgt_tok, model_type="rnn", max_len=MAX_TGT_LEN):
     eos = tgt_tok.word2idx["<EOS>"]
 
     # Encode source sequence once
-    encoder_output = model.encoder(src)
-    
-    if model_type == "lstm":
-        h, c = encoder_output
-    else:
-        h = encoder_output
+    if model_type == "attn":
+        encoder_outputs, h, c = model.encoder(src)
+        # Bridge hidden states from bidirectional encoder to decoder
+        h_cat = torch.cat([h[0], h[1]], dim=-1)
+        c_cat = torch.cat([c[0], c[1]], dim=-1)
+        h = model.bridge_h(h_cat).unsqueeze(0)
+        c = model.bridge_c(c_cat).unsqueeze(0)
+    elif model_type == "lstm":
+        h, c = model.encoder(src)
+        encoder_outputs = None
+    else:  # rnn
+        h = model.encoder(src)
         c = None
+        encoder_outputs = None
     
     # Start with SOS token
     outputs = torch.full((batch_size, 1), sos).to(DEVICE)
 
     for _ in range(max_len):
         # Decode one step at a time
-        if model_type == "lstm":
+        if model_type == "attn":
+            logits, h, c, _ = model.decoder(outputs[:, -1:], encoder_outputs, h, c)
+        elif model_type == "lstm":
             logits, h, c = model.decoder(outputs[:, -1:], h, c)
-        else:
+        else:  # rnn
             logits, h = model.decoder(outputs[:, -1:], h)
         
         next_token = logits[:, -1].argmax(dim=-1, keepdim=True)
@@ -64,8 +73,8 @@ def evaluate_model(model_type="rnn", checkpoint_path=None):
         model = Seq2SeqRNN(src_vocab, tgt_vocab, EMBED_DIM, HIDDEN_DIM).to(DEVICE)
     elif model_type == "lstm":
         model = Seq2SeqLSTM(src_vocab, tgt_vocab, EMBED_DIM, HIDDEN_DIM).to(DEVICE)
-    # else:
-    #     model = Seq2SeqAttention(src_vocab, tgt_vocab, EMBED_DIM, HIDDEN_DIM).to(DEVICE)
+    else:
+        model = Seq2SeqAttention(src_vocab, tgt_vocab, EMBED_DIM, HIDDEN_DIM).to(DEVICE)
 
     ckpt = torch.load(checkpoint_path, map_location=DEVICE)
     model.load_state_dict(ckpt["model_state"])

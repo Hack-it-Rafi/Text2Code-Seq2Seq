@@ -11,6 +11,7 @@ from utils import set_seed, save_checkpoint
 
 from models.rnn_seq2seq import Seq2SeqRNN
 from models.lstm_seq2seq import Seq2SeqLSTM
+from models.lstm_attention import Seq2SeqAttention
 
 def train_model(model_type="rnn"):
     set_seed()
@@ -36,11 +37,17 @@ def train_model(model_type="rnn"):
         model = Seq2SeqRNN(src_vocab, tgt_vocab, EMBED_DIM, HIDDEN_DIM).to(DEVICE)
     elif model_type == "lstm":
         model = Seq2SeqLSTM(src_vocab, tgt_vocab, EMBED_DIM, HIDDEN_DIM).to(DEVICE)
+    elif model_type == "attn":
+        model = Seq2SeqAttention(src_vocab, tgt_vocab, EMBED_DIM, HIDDEN_DIM).to(DEVICE)
     else:
         raise ValueError("model_type must be rnn/lstm/attn")
 
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
     criterion = nn.CrossEntropyLoss(ignore_index=tgt_tok.word2idx["<PAD>"])
+
+    # Track best validation loss
+    best_val_loss = float('inf')
+    best_epoch = 0
 
     for epoch in range(EPOCHS):
         model.train()
@@ -80,12 +87,18 @@ def train_model(model_type="rnn"):
 
         print(f"Epoch {epoch+1} Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f}")
 
-        ckpt_path = os.path.join(CHECKPOINT_DIR, f"{model_type}_epoch{epoch+1}.pt")
-        save_checkpoint(model, optimizer, epoch+1, ckpt_path)
+        # Save only if this is the best model so far
+        if avg_val_loss < best_val_loss:
+            best_val_loss = avg_val_loss
+            best_epoch = epoch + 1
+            ckpt_path = os.path.join(CHECKPOINT_DIR, f"{model_type}_best.pt")
+            save_checkpoint(model, optimizer, epoch+1, ckpt_path)
+            print(f"✓ New best model saved! (Val Loss: {best_val_loss:.4f})")
 
+    print(f"\nTraining complete. Best model from epoch {best_epoch} with Val Loss: {best_val_loss:.4f}")
     torch.save(src_tok, f"{model_type}_src_tokenizer.pt")
     torch.save(tgt_tok, f"{model_type}_tgt_tokenizer.pt")
-    print("Training complete. Tokenizers saved.")
+    print("Tokenizers saved.")
 
 if __name__ == "__main__":
     import argparse
