@@ -8,11 +8,13 @@ from metrics import token_accuracy, bleu_score, exact_match
 from tokenizer import Tokenizer
 
 from models.rnn_seq2seq import Seq2SeqRNN
+from models.lstm_seq2seq import Seq2SeqLSTM
+
 
 # Allow safe loading of Tokenizer class
 torch.serialization.add_safe_globals([Tokenizer])
 
-def greedy_decode(model, src, tgt_tok, max_len=MAX_TGT_LEN):
+def greedy_decode(model, src, tgt_tok, model_type="rnn", max_len=MAX_TGT_LEN):
     model.eval()
     batch_size = src.size(0)
 
@@ -20,14 +22,24 @@ def greedy_decode(model, src, tgt_tok, max_len=MAX_TGT_LEN):
     eos = tgt_tok.word2idx["<EOS>"]
 
     # Encode source sequence once
-    hidden = model.encoder(src)
+    encoder_output = model.encoder(src)
+    
+    if model_type == "lstm":
+        h, c = encoder_output
+    else:
+        h = encoder_output
+        c = None
     
     # Start with SOS token
     outputs = torch.full((batch_size, 1), sos).to(DEVICE)
 
     for _ in range(max_len):
         # Decode one step at a time
-        logits, hidden = model.decoder(outputs[:, -1:], hidden)
+        if model_type == "lstm":
+            logits, h, c = model.decoder(outputs[:, -1:], h, c)
+        else:
+            logits, h = model.decoder(outputs[:, -1:], h)
+        
         next_token = logits[:, -1].argmax(dim=-1, keepdim=True)
         outputs = torch.cat([outputs, next_token], dim=1)
 
@@ -50,8 +62,8 @@ def evaluate_model(model_type="rnn", checkpoint_path=None):
 
     if model_type == "rnn":
         model = Seq2SeqRNN(src_vocab, tgt_vocab, EMBED_DIM, HIDDEN_DIM).to(DEVICE)
-    # elif model_type == "lstm":
-    #     model = Seq2SeqLSTM(src_vocab, tgt_vocab, EMBED_DIM, HIDDEN_DIM).to(DEVICE)
+    elif model_type == "lstm":
+        model = Seq2SeqLSTM(src_vocab, tgt_vocab, EMBED_DIM, HIDDEN_DIM).to(DEVICE)
     # else:
     #     model = Seq2SeqAttention(src_vocab, tgt_vocab, EMBED_DIM, HIDDEN_DIM).to(DEVICE)
 
@@ -66,7 +78,7 @@ def evaluate_model(model_type="rnn", checkpoint_path=None):
     for src, tgt in tqdm(test_loader, desc="Evaluating"):
         src, tgt = src.to(DEVICE), tgt.to(DEVICE)
 
-        pred_ids = greedy_decode(model, src, tgt_tok)
+        pred_ids = greedy_decode(model, src, tgt_tok, model_type)
         preds_ids_all.extend(pred_ids.cpu().tolist())
         refs_ids_all.extend(tgt.cpu().tolist())
 

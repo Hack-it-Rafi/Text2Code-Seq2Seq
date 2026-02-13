@@ -10,6 +10,7 @@ from tokenizer import Tokenizer
 from utils import set_seed, save_checkpoint
 
 from models.rnn_seq2seq import Seq2SeqRNN
+from models.lstm_seq2seq import Seq2SeqLSTM
 
 def train_model(model_type="rnn"):
     set_seed()
@@ -33,6 +34,8 @@ def train_model(model_type="rnn"):
 
     if model_type == "rnn":
         model = Seq2SeqRNN(src_vocab, tgt_vocab, EMBED_DIM, HIDDEN_DIM).to(DEVICE)
+    elif model_type == "lstm":
+        model = Seq2SeqLSTM(src_vocab, tgt_vocab, EMBED_DIM, HIDDEN_DIM).to(DEVICE)
     else:
         raise ValueError("model_type must be rnn/lstm/attn")
 
