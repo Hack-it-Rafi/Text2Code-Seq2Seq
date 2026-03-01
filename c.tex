@@ -1,0 +1,173 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[left=0.8in,right=0.8in,top=0.8in,bottom=0.8in]{geometry}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\hypersetup{
+    colorlinks=true,
+    urlcolor=blue,
+}
+
+\titleformat{\section}{\large\bfseries}{}{0em}{}[\titlerule]
+\setlist[itemize]{noitemsep, topsep=0pt}
+\setlength{\parindent}{0pt}   % Removes unwanted indentation
+\setlength{\parskip}{4pt}
+
+\begin{document}
+
+%====================
+% HEADER
+%====================
+
+\begin{center}
+    {\LARGE \textbf{Imamul Hossain Rafi}} \\
+    Dhaka, Bangladesh \\
+    +8801568271071 \\
+    \href{mailto:bsse1323@iit.du.ac.bd}{bsse1323@iit.du.ac.bd} \\
+    \href{https://github.com/Hack-it-Rafi}{github.com/Hack-it-Rafi}
+\end{center}
+
+
+%====================
+% EDUCATION
+%====================
+
+\section*{Education}
+
+\textbf{University of Dhaka} \hfill 2021 -- Present \\
+BSc in Software Engineering \\
+Institute of Information Technology (IIT) \\
+CGPA: 3.65 (Up to 7th Semester)
+
+\textbf{Notre Dame College, Dhaka} \hfill 2018 -- 2020 \\
+Higher Secondary Certificate (Science) — GPA 5.00
+
+%====================
+% EXPERIENCE
+%====================
+
+\section*{Experience}
+
+\textbf{Software Engineer Intern} \hfill Mar 2025 -- Aug 2025 \\
+SYNC, Ithra, Aramco (Saudi Arabia)
+\begin{itemize}
+    \item Developed a user wellbeing application focused on reducing screen time.
+    \item Conducted ML research on analyzing “Terms \& Conditions” documents for a legal-support assistant bot.
+    \item Worked on scalable frontend-backend integration and application optimization.
+\end{itemize}
+
+\textbf{WPA Technical Support Intern} \hfill Jul 2024 -- Dec 2024 \\
+U.S. Embassy Dhaka, Department of Justice
+\begin{itemize}
+    \item Conducted research on gamification, crime reporting systems, and crowdsourcing models.
+    \item Designed and developed an educational platform on wildlife and biodiversity conservation.
+    \item Contributed to system architecture planning and documentation.
+\end{itemize}
+
+%====================
+% PROJECTS
+%====================
+
+\section*{Selected Projects}
+
+\textbf{AI Workflow Extraction from Screen Recordings} \\
+Transformer-Based Video Understanding System
+\begin{itemize}
+    \item Collected and curated long-duration (20--30 min) screen recordings and built a structured annotation pipeline.
+    \item Designed a chunking system splitting videos into 3-second clips (30 frames each).
+    \item Fine-tuned TimeSformer (divided space-time attention) for multi-head prediction of user actions and application context.
+    \item Implemented class-weighted loss, mixed-precision (FP16) CUDA training, and temporal smoothing for workflow stability.
+    \item Built a full-stack application (React + FastAPI) generating structured workflow reports with task duration summaries.
+    \item Exported workflow results in JSON, CSV, and PDF formats.
+\end{itemize}
+
+\textbf{Distributed Stack Overflow Application}
+\begin{itemize}
+    \item Developed a distributed Q\&A platform using Docker, Nginx, Express, and MongoDB.
+    \item Implemented scalable backend architecture with object storage (MinIO).
+    \item Built frontend using React, TypeScript, and Redux.
+\end{itemize}
+
+\textbf{Text-to-Python Code Generation using Seq2Seq Models}
+\begin{itemize}
+    \item Implemented and compared three Seq2Seq architectures (Vanilla RNN, LSTM, BiLSTM with Bahdanau Attention) on CodeSearchNet Python dataset for natural language to code translation.
+    \item Evaluated models using token accuracy, BLEU score, and exact match metrics; implemented attention visualization and dockerized the application.
+\end{itemize}
+
+\textbf{Project Management System}
+\begin{itemize}
+    \item Developed a full-stack project management application using NestJS and MongoDB.
+    \item Implemented authentication, task tracking, and collaboration features.
+\end{itemize}
+
+\textbf{Banglish-to-Bangla Storytelling Platform}
+\begin{itemize}
+    \item Built a multilingual story-writing platform with integrated AI chatbot.
+    \item Integrated pretrained speech model (wav2vec2-large-xlsr-bengali).
+\end{itemize}
+
+\textbf{Blockchain Project – Portech}
+\begin{itemize}
+    \item Developed a hybrid blockchain-based supply chain documentation system.
+    \item Used Solidity and Request-Network for secure transaction workflows.
+\end{itemize}
+
+%====================
+% TECHNICAL SKILLS
+%====================
+
+\section*{Technical Skills}
+
+\textbf{Frontend:} React, TypeScript, NextJS, Tailwind, Redux \\
+\textbf{Backend:} Node.js, Express.js, NestJS, FastAPI, Python \\
+\textbf{Machine Learning:} PyTorch, Transformers, Video Classification, Temporal Modeling, CUDA \\
+\textbf{Database:} MongoDB, MySQL \\
+\textbf{DevOps \& Tools:} Docker, Nginx, Git, Firebase, Linux \\
+\textbf{Languages:} Python, C++, C, Java, C\#, JavaScript, TypeScript
+
+%====================
+% ACHIEVEMENTS
+%====================
+
+\section*{Achievements}
+
+\begin{itemize}
+    \item Champion — UIU CSE Fest Blockchain Olympiad (2025)
+    \item Champion — Bangladesh Math Olympiad (Regional Round)
+    \item Second Runners-Up — Bangladesh Math Olympiad (National Round)
+    \item National Math Camp Participant
+\end{itemize}
+
+%====================
+% LEADERSHIP
+%====================
+
+\section*{Leadership}
+
+\textbf{President, Brahmanbaria Science Club} \hfill Nov 2023 -- Present
+\begin{itemize}
+    \item Organized 48 technical sessions and 6 workshops.
+    \item Hosted district-level science Olympiads.
+    \item Coordinated regional round of National Junior Science Olympiad.
+\end{itemize}
+
+%====================
+% REFERENCES
+%====================
+
+\section*{References}
+
+\textbf{Dr. B M Mainul Hossain} \\
+Director and Professor \\
+Institute of Information Technology (IIT), University of Dhaka \\
+Email: \href{mailto:mainul@iit.du.ac.bd}{mainul@iit.du.ac.bd}
+
+\textbf{Dr. Ahmedul Kabir} \\
+Associate Professor \\
+Institute of Information Technology (IIT), University of Dhaka \\
+Email: \href{kabir@iit.du.ac.bd}
+
+\end{document}

@@ -5,7 +5,7 @@ class EncoderRNN(nn.Module):
     def __init__(self, vocab_size, embed_dim, hidden_dim):
         super().__init__()
         self.embedding = nn.Embedding(vocab_size, embed_dim)
-        self.rnn = nn.RNN(embed_dim, hidden_dim, batch_first=True)
+        self.rnn = nn.RNN(embed_dim, hidden_dim, batch_first=True) # (batch_size, sequence_length, features)
 
     def forward(self, x):
         emb = self.embedding(x)

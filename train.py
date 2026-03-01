@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 from config import *
 from dataset import load_data, CodeSearchNetDataset
@@ -12,6 +13,26 @@ from utils import set_seed, save_checkpoint
 from models.rnn_seq2seq import Seq2SeqRNN
 from models.lstm_seq2seq import Seq2SeqLSTM
 from models.lstm_attention import Seq2SeqAttention
+
+def plot_loss_curves(train_losses, val_losses, model_type):
+    """Plot and save training and validation loss curves."""
+    plt.figure(figsize=(10, 6))
+    epochs = range(1, len(train_losses) + 1)
+    
+    plt.plot(epochs, train_losses, 'b-', label='Training Loss', linewidth=2)
+    plt.plot(epochs, val_losses, 'r-', label='Validation Loss', linewidth=2)
+    
+    plt.xlabel('Epoch', fontsize=12)
+    plt.ylabel('Loss', fontsize=12)
+    plt.title(f'Training and Validation Loss - {model_type.upper()}', fontsize=14)
+    plt.legend(fontsize=10)
+    plt.grid(True, alpha=0.3)
+    
+    # Save the plot
+    plot_path = os.path.join(PLOT_DIR, f"{model_type}_loss_curves.png")
+    plt.savefig(plot_path, dpi=300, bbox_inches='tight')
+    print(f"Loss curves saved to: {plot_path}")
+    plt.close()
 
 def train_model(model_type="rnn"):
     set_seed()
@@ -45,9 +66,11 @@ def train_model(model_type="rnn"):
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
     criterion = nn.CrossEntropyLoss(ignore_index=tgt_tok.word2idx["<PAD>"])
 
-    # Track best validation loss
+    # Track best and losses for plotting
     best_val_loss = float('inf')
     best_epoch = 0
+    train_losses = []
+    val_losses = []
 
     for epoch in range(EPOCHS):
         model.train()
@@ -69,6 +92,7 @@ def train_model(model_type="rnn"):
             total_loss += loss.item()
 
         avg_train_loss = total_loss / len(train_loader)
+        train_losses.append(avg_train_loss)
 
         model.eval()
         val_loss = 0
@@ -84,6 +108,7 @@ def train_model(model_type="rnn"):
                 val_loss += loss.item()
 
         avg_val_loss = val_loss / len(val_loader)
+        val_losses.append(avg_val_loss)
 
         print(f"Epoch {epoch+1} Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f}")
 
@@ -96,6 +121,10 @@ def train_model(model_type="rnn"):
             print(f"✓ New best model saved! (Val Loss: {best_val_loss:.4f})")
 
     print(f"\nTraining complete. Best model from epoch {best_epoch} with Val Loss: {best_val_loss:.4f}")
+    
+    # Plot loss curves
+    plot_loss_curves(train_losses, val_losses, model_type)
+    
     torch.save(src_tok, f"{model_type}_src_tokenizer.pt")
     torch.save(tgt_tok, f"{model_type}_tgt_tokenizer.pt")
     print("Tokenizers saved.")
